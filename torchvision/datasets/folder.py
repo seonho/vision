@@ -1,6 +1,6 @@
 from .vision import VisionDataset
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 import os
 import os.path
@@ -154,6 +154,13 @@ def pil_loader(path):
     # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
     with open(path, 'rb') as f:
         img = Image.open(f)
+        
+        # capture and ignore this bug: https://github.com/python-pillow/Pillow/issues/3973
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception:
+            pass
+        
         return img.convert('RGB')
 
 
